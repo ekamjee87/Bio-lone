@@ -4,8 +4,8 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Suspense, useEffect, useState } from "react";
 import * as THREE from "three";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 
 function MaleModel() {
   const [obj, setObj] = useState<THREE.Group | null>(null);
@@ -38,7 +38,7 @@ function MaleModel() {
     // Load MTL first for proper mesh-to-material mapping
     const mtlLoader = new MTLLoader();
     mtlLoader.setPath("/Models/Male Body/");
-    mtlLoader.load("9bfa112a99844626ac2480fff6276f0e.mtl", (materials) => {
+    mtlLoader.load("9bfa112a99844626ac2480fff6276f0e.mtl", (materials: any) => {
       materials.preload();
 
       const objLoader = new OBJLoader();
@@ -46,9 +46,9 @@ function MaleModel() {
       objLoader.setPath("/Models/Male Body/");
       objLoader.load(
         "9bfa112a99844626ac2480fff6276f0e.obj",
-        (loadedObj) => {
+        (loadedObj: any) => {
           // Now traverse and replace materials based on material name
-          loadedObj.traverse((child) => {
+          loadedObj.traverse((child: any) => {
             if (child instanceof THREE.Mesh) {
               const matName = (child.material as THREE.Material)?.name || "";
               console.log("Mesh:", child.name, "Material:", matName);
@@ -124,12 +124,12 @@ function MaleModel() {
 
           setObj(loadedObj);
         },
-        (xhr) => {
+        (xhr: any) => {
           if (xhr.total > 0) {
             console.log(Math.round((xhr.loaded / xhr.total) * 100) + "% loaded");
           }
         },
-        (err) => console.error("OBJ load error:", err)
+        (err: any) => console.error("OBJ load error:", err)
       );
     });
   }, []);

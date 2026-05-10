@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export default function AnatomyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -61,21 +61,22 @@ export default function AnatomyCanvas() {
         const gltfLoader = new GLTFLoader();
         gltfLoader.load(
           modelPath,
-          (gltf) => {
+          (gltf: any) => {
             const model = gltf.scene;
             
-            model.traverse((child) => {
+            model.traverse((child: any) => {
               if (child instanceof THREE.Mesh) {
                 if (child.material) {
                   // INJECT FEMALE TEXTURE
+                  const mat = child.material as THREE.MeshStandardMaterial;
                   if (isFemale && femaleTex) {
-                    child.material.map = femaleTex;
+                    mat.map = femaleTex;
                   }
                   
-                  child.material.vertexColors = false;
-                  child.material.side = THREE.DoubleSide;
-                  child.material.roughness = 0.6;
-                  child.material.needsUpdate = true;
+                  mat.vertexColors = false;
+                  mat.side = THREE.DoubleSide;
+                  mat.roughness = 0.6;
+                  mat.needsUpdate = true;
                 }
               }
             });
@@ -92,7 +93,7 @@ export default function AnatomyCanvas() {
             scene.add(model);
             setLoading(false);
           },
-          (xhr) => {
+          (xhr: any) => {
               if (xhr.total > 0) setProgress(Math.round((xhr.loaded / xhr.total) * 100));
           }
         );

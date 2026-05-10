@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 interface ModelCanvasProps {
   modelPath: string;
@@ -68,14 +68,14 @@ export default function ModelCanvas({ modelPath }: ModelCanvasProps) {
     
     gltfLoader.load(
       modelPath,
-      (gltf) => {
+      (gltf: any) => {
         const model = gltf.scene;
 
-        model.traverse((child) => {
+        model.traverse((child: any) => {
           if (child instanceof THREE.Mesh) {
             const materials = Array.isArray(child.material) ? child.material : [child.material];
             
-            materials.forEach((material) => {
+            materials.forEach((material: any) => {
               if (!material) return;
               
               material.side = THREE.DoubleSide;
@@ -110,7 +110,7 @@ export default function ModelCanvas({ modelPath }: ModelCanvasProps) {
                 }
               } else {
                 // Texture is present, ensure it pops
-                material.map.colorSpace = THREE.SRGBColorSpace;
+                if (material.map) material.map.colorSpace = THREE.SRGBColorSpace;
                 material.color.set(0xffffff); 
                 material.vertexColors = false;
                 
@@ -137,7 +137,7 @@ export default function ModelCanvas({ modelPath }: ModelCanvasProps) {
         scene.add(model);
         setLoading(false);
       },
-      (xhr) => {
+      (xhr: any) => {
         if (xhr.total > 0) setProgress(Math.round((xhr.loaded / xhr.total) * 100));
       }
     );
