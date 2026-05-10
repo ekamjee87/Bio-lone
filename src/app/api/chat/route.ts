@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 const SYSTEM_PROMPT = `You are an advanced AI medical assistant and anatomy expert integrated into a futuristic, high-fidelity biological visualization platform. 
 Your primary users are medical students, doctors, and biology enthusiasts.
 Provide highly accurate, professional, yet easy-to-understand explanations of human anatomy, physiology, and pathology.
