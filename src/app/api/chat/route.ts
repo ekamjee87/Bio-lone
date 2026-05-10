@@ -1,16 +1,6 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Configure OpenAI to use OpenRouter
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  baseURL: 'https://openrouter.ai/api/v1',
-  defaultHeaders: {
-    'HTTP-Referer': 'http://localhost:3000', // Required for OpenRouter rankings
-    'X-Title': 'Bio Clone AI', // Optional
-  },
-});
-
 const SYSTEM_PROMPT = `You are an advanced AI medical assistant and anatomy expert integrated into a futuristic, high-fidelity biological visualization platform. 
 Your primary users are medical students, doctors, and biology enthusiasts.
 Provide highly accurate, professional, yet easy-to-understand explanations of human anatomy, physiology, and pathology.
@@ -23,6 +13,16 @@ export async function POST(req: Request) {
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'Invalid messages format' }, { status: 400 });
     }
+
+    // Initialize OpenAI inside the handler to prevent build-time errors
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
+      baseURL: 'https://openrouter.ai/api/v1',
+      defaultHeaders: {
+        'HTTP-Referer': 'https://bio-clone.vercel.app', 
+        'X-Title': 'Bio Clone AI',
+      },
+    });
 
     const response = await openai.chat.completions.create({
       model: 'openai/gpt-4o-mini', // OpenRouter model format
