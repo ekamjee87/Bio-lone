@@ -3,7 +3,11 @@
 import { Search, ChevronDown } from "lucide-react";
 import Image from "next/image";
 
-export default function DashboardHeader() {
+interface DashboardHeaderProps {
+  userName?: string;
+}
+
+export default function DashboardHeader({ userName }: DashboardHeaderProps) {
   const categories = [
     "Anatomy",
     "Muscles & Skeletal",
@@ -23,7 +27,13 @@ export default function DashboardHeader() {
       <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay pointer-events-none"></div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full md:w-[55%] flex flex-col items-start gap-6">
+      <div className="relative z-10 w-full md:w-[55%] flex flex-col items-start gap-4">
+        {userName && (
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#e2cfff] text-xs font-bold uppercase tracking-widest mb-2 animate-fade-in">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+            Welcome back, {userName}
+          </div>
+        )}
         <h1 className="text-3xl md:text-4xl lg:text-[42px] font-medium leading-[1.2] text-[#f8f5ff] max-w-xl text-shadow-sm">
           Visualize anatomy, disease, and treatments in <span className="text-[#e2cfff] drop-shadow-[0_0_15px_rgba(226,207,255,0.6)] font-semibold">interactive 3D</span>
         </h1>
