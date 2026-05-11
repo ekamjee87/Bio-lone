@@ -31,15 +31,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    if (!auth || typeof auth.onAuthStateChanged !== "function") {
+      console.warn("Firebase Auth is not available. Skipping auth state check.");
       setLoading(false);
-    });
+      return;
+    }
 
-    return () => unsubscribe();
+    try {
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error in onAuthStateChanged:", error);
+      setLoading(false);
+    }
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!auth || typeof auth.onAuthStateChanged !== "function") {
+      alert("System Error: Authentication service is not configured. Please check environment variables.");
+      return;
+    }
     try {
       setLoading(true);
       await signInWithPopup(auth, googleProvider);
@@ -52,6 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
+    if (!auth || typeof auth.signOut !== "function") return;
     try {
       await signOut(auth);
     } catch (error) {

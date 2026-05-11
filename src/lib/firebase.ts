@@ -13,33 +13,40 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only once
-let app;
-let auth: any;
-let db: any;
-let storage: any;
+let app: any;
+let auth: any = null;
+let db: any = null;
+let storage: any = null;
 const googleProvider = new GoogleAuthProvider();
 
-const isConfigValid = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "undefined";
+const isConfigValid = !!firebaseConfig.apiKey && 
+                     firebaseConfig.apiKey !== "undefined" && 
+                     firebaseConfig.apiKey !== "";
 
-if (typeof window === "undefined" && !isConfigValid) {
-  // Mock initialization for build time
-  app = getApps().length ? getApp() : initializeApp({ apiKey: "mock-key", projectId: "mock-id" });
-} else {
-  try {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-  } catch (error) {
-    console.error("Firebase initialization error:", error);
-    app = getApp(); // Fallback to existing app if any
-  }
-}
-
-// These can still throw if the app is partially initialized, so we wrap them
 try {
-  auth = getAuth(app);
-  db = getFirestore(app);
-  storage = getStorage(app);
+  if (typeof window === "undefined" && !isConfigValid) {
+    // Mock initialization for build time
+    app = getApps().length ? getApp() : initializeApp({ apiKey: "mock-key", projectId: "mock-id" });
+  } else if (!isConfigValid) {
+    // If we're on client but keys are missing, don't initialize real firebase
+    console.warn("Firebase keys are missing. Auth and database features will be disabled.");
+    app = getApps().length ? getApp() : initializeApp({ apiKey: "missing-key", projectId: "missing-id" });
+  } else {
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  }
+
+  // Safely initialize services
+  if (app) {
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+  }
 } catch (error) {
-  console.warn("Firebase services could not be initialized:", error);
+  console.error("Firebase critical initialization error:", error);
+  // Fallback to empty objects to prevent crashes on undefined access
+  auth = auth || {};
+  db = db || {};
+  storage = storage || {};
 }
 
 export { app, auth, db, storage, googleProvider };

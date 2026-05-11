@@ -33,10 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#020205] text-white selection:bg-biotech-purple selection:text-white">
         <AuthProvider>
-          <AuthGuard>
-            <CinematicBackground />
-            <SmoothScroll>{children}</SmoothScroll>
-          </AuthGuard>
+          {children}
         </AuthProvider>
       </body>
     </html>
